@@ -1,0 +1,97 @@
+@startuml Sequence Diagram - Borrow Book
+
+actor Librarian
+participant "LibraryMenu" as Menu
+participant "LibraryService" as Service
+participant "DatabaseConnection" as DBConn
+database "PostgreSQL\nDatabase" as DB
+
+Librarian -> Menu: Select "Borrow Book"
+activate Menu
+
+Menu -> Librarian: Prompt for Member ID
+Librarian -> Menu: Enter Member ID
+Menu -> Menu: Validate input (not empty)
+
+Menu -> Librarian: Prompt for ISBN
+Librarian -> Menu: Enter ISBN
+Menu -> Menu: Validate input (not empty)
+
+Menu -> Service: borrowBook(memberId, isbn)
+activate Service
+note right: synchronized method\n(thread-safe)
+
+Service -> DBConn: getConnection()
+activate DBConn
+DBConn -> DB: Connect
+activate DB
+DB --> DBConn: Connection
+deactivate DB
+DBConn --> Service: Connection
+deactivate DBConn
+
+Service -> DB: SELECT * FROM members WHERE MemberID = ?
+activate DB
+DB --> Service: Member exists?
+deactivate DB
+
+alt Member not found
+  Service -> Menu: return false
+  Menu -> Librarian: ✗ Member not found
+else Member exists
+  
+  Service -> DB: SELECT Available FROM books WHERE ISBN = ?
+  activate DB
+  DB --> Service: Book availability status
+  deactivate DB
+  
+  alt Book not available
+    Service -> Menu: return false
+    Menu -> Librarian: ✗ Book not available
+  else Book available
+    
+    Service -> DB: SELECT COUNT(*) FROM borrowing_records\nWHERE MemberID = ? AND ReturnDate IS NULL
+    activate DB
+    DB --> Service: Current borrowed count
+    deactivate DB
+    
+    alt Borrowed count >= 5
+      Service -> Menu: return false
+      Menu -> Librarian: ✗ Borrowing limit reached (5 books)
+    else Can borrow
+      
+      Service -> DB: BEGIN TRANSACTION
+      activate DB
+      
+      Service -> DB: INSERT INTO borrowing_records\n(MemberID, ISBN, BorrowDate)
+      DB --> Service: Record created
+      
+      Service -> DB: UPDATE books SET Available = FALSE\nWHERE ISBN = ?
+      DB --> Service: Book marked unavailable
+      
+      Service -> DB: COMMIT TRANSACTION
+      DB --> Service: Transaction committed
+      deactivate DB
+      
+      Service -> Menu: return true
+      Menu -> Librarian: ✓ Book borrowed successfully
+    end
+  end
+end
+
+deactivate Service
+deactivate Menu
+
+note over Service, DB
+  All database operations use
+  try-with-resources for
+  automatic connection closing
+end note
+
+note over Service
+  If any error occurs during
+  transaction, ROLLBACK is
+  performed automatically
+end note
+
+@enduml

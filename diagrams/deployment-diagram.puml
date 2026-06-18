@@ -1,0 +1,108 @@
+@startuml Deployment Diagram - Library Management System
+
+node "Client Workstation" as client {
+  component "Terminal/Console" as terminal {
+    artifact "User Interface\n(Command Line)" as ui
+  }
+}
+
+node "Application Server" as appserver {
+  component "Java Runtime Environment\n(JRE 17+)" as jre {
+    
+    package "Library Management Application" {
+      component "Main\n(Entry Point)" as main
+      component "LibraryMenu\n(User Interface)" as menu
+      component "LibraryService\n(Business Logic)" as service
+      component "DatabaseConnection\n(Data Access)" as dbconn
+      
+      package "Model Layer" {
+        component "Book" as book
+        component "Member" as member
+      }
+      
+      package "Task Layer" {
+        component "BorrowTask\n(Runnable)" as task
+      }
+      
+      component "ExecutorService\n(Thread Pool)" as executor
+    }
+    
+    artifact "library-ms.jar" as jar
+  }
+}
+
+node "Database Server" as dbserver {
+  component "PostgreSQL 12+" as postgres {
+    database "library_ms" as db {
+      storage "books table" as books_table
+      storage "members table" as members_table
+      storage "borrowing_records table" as records_table
+    }
+  }
+}
+
+' Connections
+client -down-> appserver : "User Interaction\n(Input/Output)"
+terminal -down-> main : "Execute Commands"
+
+main -down-> menu : "Initialize"
+menu -down-> service : "API Calls"
+service -down-> dbconn : "Database Operations"
+service --> book : "Uses"
+service --> member : "Uses"
+
+menu -down-> executor : "Creates Thread Pool"
+executor -down-> task : "Submits Tasks"
+task -down-> service : "Calls borrowBook()"
+
+dbconn -down-> postgres : "JDBC Connection\njdbc:postgresql://\nlocalhost:5432/library_ms"
+
+postgres -down-> db : "SQL Queries"
+db --> books_table
+db --> members_table
+db --> records_table
+
+note right of appserver
+  **Runtime Environment**
+  - Java 17+
+  - Maven 3.6+
+  - PostgreSQL JDBC Driver 42.6.0
+end note
+
+note right of dbserver
+  **Database Configuration**
+  - Host: localhost
+  - Port: 5432
+  - Database: library_ms
+  - User: postgres
+  - Password: 121402pr0732021
+end note
+
+note right of executor
+  **Thread Pool Configuration**
+  - Fixed Thread Pool: 3 threads
+  - Simulates concurrent librarians
+  - Ensures thread safety via
+    synchronized methods
+end note
+
+note bottom of service
+  **Synchronized Methods**
+  - addBook()
+  - registerMember()
+  - borrowBook()
+  - returnBook()
+  
+  Prevents race conditions
+  in concurrent operations
+end note
+
+note bottom of dbconn
+  **Connection Management**
+  - Try-with-resources
+  - Automatic connection closing
+  - Transaction support
+  - Rollback on error
+end note
+
+@enduml

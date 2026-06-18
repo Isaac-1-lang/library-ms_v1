@@ -39,9 +39,9 @@ CREATE TABLE IF NOT EXISTS borrowing_records (
 
 -- Sample data for testing (optional)
 INSERT INTO books (ISBN, Title, Author, PublicationYear, Available) VALUES
-('978-0-13-468599-1', 'Effective Java', 'Joshua Bloch', 2018, TRUE),
-('978-0-13-235088-4', 'Clean Code', 'Robert C. Martin', 2008, TRUE),
-('978-0-13-597825-6', 'Java Concurrency in Practice', 'Brian Goetz', 2006, TRUE);
+('978-0-13-468599-1', 'Effective Java', 'Jean Damascene', 2018, TRUE),
+('978-0-13-235088-4', 'Clean Code', 'Larissa', 2008, TRUE),
+('978-0-13-597825-6', 'Java Concurrency in Practice', 'HATANGIMBAZI Hilaire', 2006, TRUE);
 
 INSERT INTO members (MemberID, Name) VALUES
 ('M001', 'John Doe'),

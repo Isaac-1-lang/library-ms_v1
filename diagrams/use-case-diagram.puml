@@ -1,0 +1,68 @@
+@startuml Use Case Diagram - Library Management System
+
+left to right direction
+skinparam packageStyle rectangle
+
+actor Librarian as L
+actor Member as M
+actor "Database System" as DB
+
+rectangle "Rwanda National Digital Library System" {
+  usecase "Add Book" as UC1
+  usecase "Register Member" as UC2
+  usecase "Borrow Book" as UC3
+  usecase "Return Book" as UC4
+  usecase "View Available Books" as UC5
+  usecase "View Member's Borrowed Books" as UC6
+  usecase "Run Simulation" as UC7
+  usecase "Run Concurrent Borrowing" as UC8
+  usecase "Validate Borrowing Limit" as UC9
+  usecase "Check Book Availability" as UC10
+  usecase "Record Transaction" as UC11
+}
+
+' Librarian interactions
+L --> UC1
+L --> UC2
+L --> UC3
+L --> UC4
+L --> UC5
+L --> UC6
+L --> UC7
+L --> UC8
+
+' Member interactions
+M --> UC3 : requests
+M --> UC4 : requests
+M --> UC6 : views own
+
+' Include relationships
+UC3 ..> UC9 : <<include>>
+UC3 ..> UC10 : <<include>>
+UC3 ..> UC11 : <<include>>
+UC4 ..> UC11 : <<include>>
+
+' Extend relationships
+UC7 ..> UC3 : <<extend>>
+UC7 ..> UC4 : <<extend>>
+
+' Database interactions
+UC1 --> DB
+UC2 --> DB
+UC3 --> DB
+UC4 --> DB
+UC5 --> DB
+UC6 --> DB
+
+note right of UC3
+  Maximum 5 books
+  per member enforced
+end note
+
+note right of UC8
+  Demonstrates thread
+  safety with synchronized
+  methods
+end note
+
+@enduml
