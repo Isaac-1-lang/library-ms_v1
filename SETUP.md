@@ -1,4 +1,4 @@
-# Setup Guide - Rwanda National Digital Library Management System
+# Setup Guide  Rwanda National Digital Library Management System
 
 ## Prerequisites
 - Java 17 or higher
@@ -45,7 +45,12 @@ If you need to change these, edit `src/main/java/health/database/DatabaseConnect
 
 2. **Run the application:**
    ```bash
-   mvn exec:java -Dexec.mainClass="health.Main"
+   mvn exec:java
+   ```
+
+   Or with the full command:
+   ```bash
+   mvn exec:java -Dexec.mainClass=health.Main
    ```
 
 ### Option 2: Using IDE (IntelliJ IDEA / Eclipse)
