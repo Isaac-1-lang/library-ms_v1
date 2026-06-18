@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     public static void main(String[] args) {
         System.out.println("=".repeat(80));
-        System.out.println("RWANDA NATIONAL DIGITAL LIBRARY - LIBRARY MANAGEMENT SYSTEM");
+        System.out.println("RWANDA NATIONAL DIGITAL LIBRARY - Library_MS");
         System.out.println("=".repeat(80));
         System.out.println();
 
@@ -43,9 +43,9 @@ public class Main {
 
             // Task 2: Register members (Encapsulation)
             System.out.println("--- Registering Library Members ---");
-            libraryService.registerMember(new Member("M001", "John Doe"));
-            libraryService.registerMember(new Member("M002", "Jane Smith"));
-            libraryService.registerMember(new Member("M003", "Alice Johnson"));
+            libraryService.registerMember(new Member("M001", "Isaac Precieux"));
+            libraryService.registerMember(new Member("M002", "NIYOBYOSE Precieux"));
+            libraryService.registerMember(new Member("M003", "BYIRINGIRO Samuel"));
             System.out.println();
 
             // Task 3: Display available books (Collections)

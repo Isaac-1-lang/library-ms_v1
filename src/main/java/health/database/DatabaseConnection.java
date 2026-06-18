@@ -64,7 +64,7 @@ public class DatabaseConnection {
                 """;
             stmt.execute(createBorrowingRecordsTable);
 
-            System.out.println("✓ Database schema initialized successfully");
+            System.out.println("Database schema initialized successfully");
 
         } catch (SQLException e) {
             System.err.println("Error initializing database: " + e.getMessage());
