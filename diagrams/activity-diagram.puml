@@ -1,0 +1,168 @@
+@startuml Activity Diagram - Library Management System
+
+|Librarian|
+start
+:Launch Application;
+
+|System|
+:Initialize Database;
+:Create Schema (books, members, borrowing_records);
+:Display Main Menu;
+
+|Librarian|
+:Select Menu Option;
+
+|System|
+switch (Option?)
+case (1: Add Book)
+  |System|
+  :Prompt for Book Details;
+  |Librarian|
+  :Enter ISBN, Title, Author, Year;
+  |System|
+  :Validate Input;
+  if (Valid?) then (yes)
+    :Insert into books table;
+    :Display Success Message;
+  else (no)
+    :Display Error Message;
+  endif
+
+case (2: Register Member)
+  |System|
+  :Prompt for Member Details;
+  |Librarian|
+  :Enter Member ID (M###), Name;
+  |System|
+  :Validate Input Format;
+  if (Valid?) then (yes)
+    :Insert into members table;
+    :Display Success Message;
+  else (no)
+    :Display Error Message;
+  endif
+
+case (3: Borrow Book)
+  |System|
+  :Prompt for Member ID & ISBN;
+  |Librarian|
+  :Enter Member ID & ISBN;
+  |System|
+  :Validate Input;
+  :Check Member Exists;
+  if (Member Exists?) then (yes)
+    :Check Book Availability;
+    if (Book Available?) then (yes)
+      :Check Borrowing Limit;
+      if (Count < 5?) then (yes)
+        fork
+          :Begin Transaction;
+          :Insert Borrowing Record;
+          :Update Book Availability;
+          :Commit Transaction;
+        fork again
+          :Acquire Lock (synchronized);
+        end fork
+        :Display Success Message;
+      else (no)
+        :Display "Limit Reached" Error;
+      endif
+    else (no)
+      :Display "Book Unavailable" Error;
+    endif
+  else (no)
+    :Display "Member Not Found" Error;
+  endif
+
+case (4: Return Book)
+  |System|
+  :Prompt for Member ID & ISBN;
+  |Librarian|
+  :Enter Member ID & ISBN;
+  |System|
+  :Validate Input;
+  :Find Active Borrowing Record;
+  if (Record Found?) then (yes)
+    fork
+      :Begin Transaction;
+      :Update Return Date;
+      :Mark Book as Available;
+      :Commit Transaction;
+    fork again
+      :Acquire Lock (synchronized);
+    end fork
+    :Display Success Message;
+  else (no)
+    :Display "No Active Record" Error;
+  endif
+
+case (5: View Available Books)
+  |System|
+  :Query books WHERE Available = TRUE;
+  :Format and Display Book List;
+
+case (6: View Member's Borrowed Books)
+  |System|
+  :Prompt for Member ID;
+  |Librarian|
+  :Enter Member ID;
+  |System|
+  :Query borrowing_records for Member;
+  :Display Borrowed Books List;
+
+case (7: Run Simulation)
+  |System|
+  :Confirm with Librarian;
+  if (Confirmed?) then (yes)
+    :Add Sample Books;
+    :Register Sample Members;
+    :Simulate Borrowing Operations;
+    :Test Borrowing Limit;
+    :Simulate Book Return;
+    :Display Simulation Results;
+  else (no)
+    :Cancel Simulation;
+  endif
+
+case (8: Run Concurrent Simulation)
+  |System|
+  :Confirm with Librarian;
+  if (Confirmed?) then (yes)
+    fork
+      :Create ExecutorService\n(3 Librarian Threads);
+    fork again
+      :Submit BorrowTask 1;
+    fork again
+      :Submit BorrowTask 2;
+    fork again
+      :Submit BorrowTask 3;
+    end fork
+    :Execute Tasks Concurrently;
+    :Wait for Completion;
+    :Shutdown Executor;
+    :Display Results;
+  else (no)
+    :Cancel Simulation;
+  endif
+
+case (0: Exit)
+  |System|
+  :Close Scanner;
+  :Display Goodbye Message;
+  stop
+
+endswitch
+
+:Return to Main Menu;
+|Librarian|
+:Continue or Exit?;
+
+if (Continue?) then (yes)
+  |System|
+  :Display Main Menu;
+  detach
+else (no)
+  stop
+endif
+
+@enduml

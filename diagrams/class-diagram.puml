@@ -1,0 +1,150 @@
+@startuml Class Diagram - Library Management System
+
+' Model Classes
+class Book {
+  - isbn: String
+  - title: String
+  - author: String
+  - publicationYear: int
+  - available: boolean
+  
+  + Book(isbn: String, title: String, author: String, year: int)
+  + getIsbn(): String
+  + setIsbn(isbn: String): void
+  + getTitle(): String
+  + setTitle(title: String): void
+  + getAuthor(): String
+  + setAuthor(author: String): void
+  + getPublicationYear(): int
+  + setPublicationYear(year: int): void
+  + isAvailable(): boolean
+  + setAvailable(available: boolean): void
+  + toString(): String
+}
+
+class Member {
+  - memberId: String
+  - name: String
+  - borrowedBooks: List<Book>
+  
+  + Member(memberId: String, name: String)
+  + getMemberId(): String
+  + setMemberId(id: String): void
+  + getName(): String
+  + setName(name: String): void
+  + getBorrowedBooks(): List<Book>
+  + setBorrowedBooks(books: List<Book>): void
+  + addBorrowedBook(book: Book): void
+  + removeBorrowedBook(book: Book): void
+  + getBorrowedBooksCount(): int
+  + toString(): String
+}
+
+' Service Layer
+class LibraryService {
+  - {static} MAX_BOOKS_PER_MEMBER: int = 5
+  
+  + synchronized addBook(book: Book): void
+  + synchronized registerMember(member: Member): void
+  + synchronized borrowBook(memberId: String, isbn: String): boolean
+  + synchronized returnBook(memberId: String, isbn: String): boolean
+  + getAvailableBooks(): List<Book>
+  + getMemberBorrowedBooks(memberId: String): List<Book>
+  - memberExists(conn: Connection, memberId: String): boolean
+  - isBookAvailable(conn: Connection, isbn: String): boolean
+  - getMemberBorrowedCount(conn: Connection, memberId: String): int
+}
+
+' Database Layer
+class DatabaseConnection {
+  - {static} URL: String
+  - {static} USER: String
+  - {static} PASSWORD: String
+  
+  + {static} getConnection(): Connection
+  + {static} initializeDatabase(): void
+}
+
+' Task for Multithreading
+class BorrowTask {
+  - libraryService: LibraryService
+  - memberId: String
+  - isbn: String
+  - librarianName: String
+  
+  + BorrowTask(service: LibraryService, memberId: String, isbn: String, name: String)
+  + run(): void
+}
+
+' Menu System
+class LibraryMenu {
+  - libraryService: LibraryService
+  - scanner: Scanner
+  
+  + LibraryMenu(libraryService: LibraryService)
+  + displayMainMenu(): void
+  - addBook(): void
+  - registerMember(): void
+  - borrowBook(): void
+  - returnBook(): void
+  - viewAvailableBooks(): void
+  - viewMemberBorrowedBooks(): void
+  - runSimulation(): void
+  - runConcurrentSimulation(): void
+  - getValidatedInput(prompt: String, validator: InputValidator, error: String): String
+  - getValidatedYear(prompt: String): int
+  - truncate(str: String, maxLength: int): String
+}
+
+interface InputValidator {
+  + validate(input: String): boolean
+}
+
+interface Runnable {
+  + run(): void
+}
+
+' Main Class
+class Main {
+  + {static} main(args: String[]): void
+}
+
+' Relationships
+Member "1" *-- "0..*" Book : borrows >
+LibraryService ..> Book : uses
+LibraryService ..> Member : uses
+LibraryService ..> DatabaseConnection : uses
+BorrowTask ..> LibraryService : uses
+BorrowTask ..|> Runnable : implements
+LibraryMenu ..> LibraryService : uses
+LibraryMenu ..> Book : displays
+LibraryMenu ..> Member : manages
+LibraryMenu +-- InputValidator : inner interface
+Main ..> LibraryService : creates
+Main ..> LibraryMenu : uses
+Main ..> DatabaseConnection : initializes
+
+note right of LibraryService
+  All public methods are 
+  synchronized for thread safety
+  (Task 4 requirement)
+end note
+
+note right of BorrowTask
+  Implements Runnable for
+  concurrent borrowing
+  simulation
+end note
+
+note left of Book
+  Encapsulated entity
+  (Task 2 requirement)
+end note
+
+note left of Member
+  Encapsulated entity with
+  collection of borrowed books
+  (Task 2 & 3 requirement)
+end note
+
+@enduml

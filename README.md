@@ -91,13 +91,54 @@ mvn exec:java -Dexec.mainClass="health.Main"
 
 ## Usage Examples
 
-The system demonstrates:
-- Adding books to the library
-- Registering members
-- Borrowing books (single-threaded and multi-threaded)
-- Returning books
-- Listing available books
-- Viewing member borrowed books
+The system provides an **interactive menu** with the following options:
+
+### Menu Options
+1. **Add Book** - Register a new book in the library
+   - Validates ISBN format
+   - Prevents duplicate ISBNs
+   - Requires title, author, and publication year
+
+2. **Register Member** - Register a new library member
+   - Validates Member ID format (M###)
+   - Prevents duplicate Member IDs
+   - Requires member name
+
+3. **Borrow Book** - Process a book borrowing request
+   - Validates member and book existence
+   - Enforces 5-book borrowing limit
+   - Checks book availability
+   - Creates permanent transaction record
+
+4. **Return Book** - Process a book return
+   - Validates active borrowing record
+   - Updates book availability
+   - Records return date
+
+5. **View Available Books** - Display all currently available books
+   - Shows formatted list with ISBN, title, author, and year
+
+6. **View Member's Borrowed Books** - Display books borrowed by a specific member
+   - Shows all currently borrowed books
+   - Useful for checking borrowing status
+
+7. **Run Simulation (Demo Mode)** - Automated demonstration
+   - Adds sample books and members
+   - Simulates borrowing and returning
+   - Tests borrowing limit validation
+
+8. **Run Concurrent Borrowing Simulation** - Multi-threaded demonstration
+   - Simulates 3 librarians processing requests simultaneously
+   - Demonstrates thread safety with synchronized methods
+   - Shows prevention of double-booking
+
+### Input Validation
+All menu options include comprehensive validation:
+- **Empty input prevention**
+- **Format validation** (Member ID must be M###)
+- **Year range validation** (1000-2100)
+- **Duplicate prevention** (ISBN, Member ID)
+- **Business rule enforcement** (5-book limit, availability)
 
 ## Thread Safety
 The system uses synchronized methods to ensure thread safety when multiple librarians process borrowing requests simultaneously. This prevents race conditions and ensures data consistency.

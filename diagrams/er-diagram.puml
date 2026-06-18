@@ -1,0 +1,53 @@
+@startuml ER Diagram - Library Management System
+
+' Entity definitions
+entity "books" as books {
+  * **ISBN** : VARCHAR(20) <<PK>>
+  --
+  * Title : VARCHAR(255)
+  * Author : VARCHAR(255)
+  * PublicationYear : INT
+  * Available : BOOLEAN
+}
+
+entity "members" as members {
+  * **MemberID** : VARCHAR(20) <<PK>>
+  --
+  * Name : VARCHAR(255)
+}
+
+entity "borrowing_records" as records {
+  * **RecordID** : SERIAL <<PK>>
+  --
+  * MemberID : VARCHAR(20) <<FK>>
+  * ISBN : VARCHAR(20) <<FK>>
+  * BorrowDate : DATE
+  * ReturnDate : DATE (nullable)
+}
+
+' Relationships
+members ||--o{ records : "borrows"
+books ||--o{ records : "is borrowed in"
+
+note right of books
+  **Primary Key:** ISBN
+  **Available:** TRUE when not borrowed
+  Automatically updated on borrow/return
+end note
+
+note right of members
+  **Primary Key:** MemberID
+  **Format:** M### (e.g., M001)
+  Cannot borrow more than 5 books
+end note
+
+note bottom of records
+  **Primary Key:** RecordID (Auto-increment)
+  **Foreign Keys:** 
+    - MemberID -> members.MemberID
+    - ISBN -> books.ISBN
+  **ReturnDate:** NULL until book returned
+  Permanent transaction storage
+end note
+
+@enduml
