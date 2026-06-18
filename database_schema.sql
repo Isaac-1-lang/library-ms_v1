@@ -1,9 +1,12 @@
 -- Rwanda National Digital Library - Database Schema
 -- Task 1: Database Schema Design
+-- PostgreSQL Version
 
 -- Create database
-CREATE DATABASE IF NOT EXISTS library_db;
-USE library_db;
+CREATE DATABASE library_ms;
+
+-- Connect to the database
+\c library_ms;
 
 -- Table 1: books
 -- Stores information about books in the library
@@ -25,7 +28,7 @@ CREATE TABLE IF NOT EXISTS members (
 -- Table 3: borrowing_records
 -- Stores all borrowing transactions (permanent records)
 CREATE TABLE IF NOT EXISTS borrowing_records (
-    RecordID INT PRIMARY KEY AUTO_INCREMENT,
+    RecordID SERIAL PRIMARY KEY,
     MemberID VARCHAR(20) NOT NULL,
     ISBN VARCHAR(20) NOT NULL,
     BorrowDate DATE NOT NULL,

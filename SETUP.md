@@ -2,30 +2,37 @@
 
 ## Prerequisites
 - Java 17 or higher
-- MySQL 8.0 or higher
+- PostgreSQL 12 or higher
 - Maven 3.6 or higher
 
 ## Database Setup
 
-### Step 1: Install MySQL
-If you don't have MySQL installed, download and install it from:
-https://dev.mysql.com/downloads/mysql/
+### Step 1: Install PostgreSQL
+If you don't have PostgreSQL installed, download and install it from:
+https://www.postgresql.org/download/
 
 ### Step 2: Create Database
-Open MySQL command line or MySQL Workbench and run:
+Open PostgreSQL command line (psql) or pgAdmin and run:
 
 ```sql
-CREATE DATABASE library_db;
+CREATE DATABASE library_ms;
 ```
 
-### Step 3: Configure Database Connection
-Edit `src/main/java/health/database/DatabaseConnection.java` and update the following variables if needed:
-
-```java
-private static final String URL = "jdbc:mysql://localhost:3306/library_db";
-private static final String USER = "root";  // Your MySQL username
-private static final String PASSWORD = "password";  // Your MySQL password
+Or use the command line:
+```bash
+psql -U postgres
+CREATE DATABASE library_ms;
+\q
 ```
+
+### Step 3: Database Configuration (Already Set)
+The database connection is configured with:
+- **URL**: jdbc:postgresql://localhost:5432/library_ms
+- **Username**: postgres
+- **Password**: 121402pr0732021
+- **Database**: library_ms
+
+If you need to change these, edit `src/main/java/health/database/DatabaseConnection.java`
 
 ## Running the Application
 
@@ -49,15 +56,25 @@ private static final String PASSWORD = "password";  // Your MySQL password
 
 ## Troubleshooting
 
-### MySQL Connection Error
-If you get `Communications link failure`, ensure:
-- MySQL server is running
-- Port 3306 is not blocked
+### PostgreSQL Connection Error
+If you get `Connection refused`, ensure:
+- PostgreSQL server is running
+- Port 5432 is not blocked
 - Username and password are correct
+- Database `library_ms` exists
+
+Check PostgreSQL status:
+```bash
+# Windows
+pg_ctl status
+
+# Or check in Services
+services.msc (look for postgresql service)
+```
 
 ### Driver Not Found Error
 If you get `No suitable driver found`, ensure:
-- MySQL connector dependency is in `pom.xml`
+- PostgreSQL JDBC driver dependency is in `pom.xml`
 - Run `mvn clean install` to download dependencies
 
 ### Foreign Key Constraint Error
@@ -79,8 +96,14 @@ The application demonstrates:
 
 ## Database Queries for Verification
 
-After running the application, you can verify the data in MySQL:
+After running the application, you can verify the data in PostgreSQL:
 
+Connect to database:
+```bash
+psql -U postgres -d library_ms
+```
+
+Then run queries:
 ```sql
 -- View all books
 SELECT * FROM books;

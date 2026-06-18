@@ -63,24 +63,25 @@ The Rwanda National Digital Library Management System is a computerized solution
 ## Technology Stack
 - **Java 17**: Core programming language
 - **JDBC**: Database connectivity
-- **MySQL**: Relational database (or any JDBC-compatible database)
+- **PostgreSQL**: Relational database
 - **Maven**: Build and dependency management
 - **ExecutorService**: Thread pool management for concurrent operations
 
 ## Setup Instructions
 
 ### Database Setup
-1. Create a MySQL database named `library_db`
+1. Create a PostgreSQL database named `library_ms`
 2. Run the schema creation script (automatically handled by the application on first run)
-3. Update database connection details in `DatabaseConnection.java` if needed
+3. Database connection is pre-configured
 
 ### Configuration
-Default database configuration:
-- **URL**: jdbc:mysql://localhost:3306/library_db
-- **Username**: root
-- **Password**: password
+Database configuration:
+- **URL**: jdbc:postgresql://localhost:5432/library_ms
+- **Username**: postgres
+- **Password**: 121402pr0732021
+- **Database**: library_ms
 
-Modify these in the `DatabaseConnection` class as needed.
+See SETUP.md for detailed instructions.
 
 ### Running the Application
 ```bash

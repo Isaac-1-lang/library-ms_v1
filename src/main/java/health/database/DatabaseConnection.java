@@ -10,9 +10,9 @@ import java.sql.Statement;
  * Handles database connection and schema initialization
  */
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/library_db";
-    private static final String USER = "root";
-    private static final String PASSWORD = "password";
+    private static final String URL = "jdbc:postgresql://localhost:5432/library_ms";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "121402pr0732021";
 
     /**
      * Get a database connection
@@ -50,10 +50,10 @@ public class DatabaseConnection {
                 """;
             stmt.execute(createMembersTable);
 
-            // Create borrowing_records table
+            // Create borrowing_records table (PostgreSQL uses SERIAL instead of AUTO_INCREMENT)
             String createBorrowingRecordsTable = """
                 CREATE TABLE IF NOT EXISTS borrowing_records (
-                    RecordID INT PRIMARY KEY AUTO_INCREMENT,
+                    RecordID SERIAL PRIMARY KEY,
                     MemberID VARCHAR(20) NOT NULL,
                     ISBN VARCHAR(20) NOT NULL,
                     BorrowDate DATE NOT NULL,
